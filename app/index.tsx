@@ -2,17 +2,17 @@ import React, { ComponentProps } from 'react';
 import { SafeAreaView, View, Text, StyleSheet, ScrollView } from 'react-native';
 import { FontAwesome, Ionicons, MaterialCommunityIcons, Feather, AntDesign } from '@expo/vector-icons';
 
-type IconInfo = {
-  name: string;
-  library: keyof typeof ICON_LIBRARIES;
-  color: string;
+type InfoIkon = {
+  nama: string;
+  pustaka: keyof typeof PUSTAKA_IKON;
+  warna: string;
 };
 
-type IconCardProps = {
-  icon: IconInfo;
+type PropertiKartuIkon = {
+  ikon: InfoIkon;
 };
 
-const ICON_LIBRARIES = {
+const PUSTAKA_IKON = {
   FontAwesome: (props: ComponentProps<typeof FontAwesome>) => <FontAwesome {...props} />,
   Ionicons: (props: ComponentProps<typeof Ionicons>) => <Ionicons {...props} />,
   MaterialCommunityIcons: (props: ComponentProps<typeof MaterialCommunityIcons>) => <MaterialCommunityIcons {...props} />,
@@ -20,45 +20,45 @@ const ICON_LIBRARIES = {
   AntDesign: (props: ComponentProps<typeof AntDesign>) => <AntDesign {...props} />,
 };
 
-const ICON_LIST: IconInfo[] = [
-  { name: 'rocket', library: 'FontAwesome', color: '#ff4757' },
-  { name: 'planet', library: 'Ionicons', color: '#ffa502' },
-  { name: 'space-station', library: 'MaterialCommunityIcons', color: '#747d8c' },
-  { name: 'git-branch', library: 'Feather', color: '#2ed573' },
-  { name: 'codesquare', library: 'AntDesign', color: '#1e90ff' },
-  { name: 'heart', library: 'FontAwesome', color: '#ff6b81' },
-  { name: 'game-controller', library: 'Ionicons', color: '#5352ed' },
-  { name: 'coffee', library: 'Feather', color: '#834d18' },
-  { name: 'android', library: 'MaterialCommunityIcons', color: '#a0d243' },
-  { name: 'apple1', library: 'AntDesign', color: '#ced6e0' },
+const DAFTAR_IKON: InfoIkon[] = [
+  { nama: 'rocket', pustaka: 'FontAwesome', warna: '#ff4757' },
+  { nama: 'planet', pustaka: 'Ionicons', warna: '#ffa502' },
+  { nama: 'space-station', pustaka: 'MaterialCommunityIcons', warna: '#747d8c' },
+  { nama: 'git-branch', pustaka: 'Feather', warna: '#2ed573' },
+  { nama: 'codesquare', pustaka: 'AntDesign', warna: '#1e90ff' },
+  { nama: 'heart', pustaka: 'FontAwesome', warna: '#ff6b81' },
+  { nama: 'game-controller', pustaka: 'Ionicons', warna: '#5352ed' },
+  { nama: 'coffee', pustaka: 'Feather', warna: '#834d18' },
+  { nama: 'android', pustaka: 'MaterialCommunityIcons', warna: '#a0d243' },
+  { nama: 'apple1', pustaka: 'AntDesign', warna: '#ced6e0' },
 ];
 
-const IconCard = ({ icon }: IconCardProps) => {
-  const IconComponent = ICON_LIBRARIES[icon.library];
+const KartuIkon = ({ ikon }: PropertiKartuIkon) => {
+  const KomponenIkon = PUSTAKA_IKON[ikon.pustaka];
 
   return (
-    <View style={styles.cardContainer}>
-      {/* The 'name' property is cast as 'any' because each icon library has its own specific icon name list.
-          Creating a strict type for all of them would be too complex.
-          This cast is a practical solution telling TypeScript to trust the given name. */}
-      <IconComponent name={icon.name as any} size={48} color={icon.color} />
-      <Text style={styles.iconNameText}>{icon.name}</Text>
-      <Text style={styles.iconLibraryText}>{icon.library}</Text>
+    <View style={gaya.kartu}>
+      {/* Properti 'name' diberi cast 'as any' karena setiap pustaka ikon memiliki daftar nama unik.
+          Membuat tipe yang ketat untuk semuanya terlalu rumit.
+          Cast ini adalah solusi praktis untuk memberitahu TypeScript bahwa nama yang diberikan valid. */}
+      <KomponenIkon name={ikon.nama as any} size={48} color={ikon.warna} />
+      <Text style={gaya.teksNamaIkon}>{ikon.nama}</Text>
+      <Text style={gaya.teksPustakaIkon}>{ikon.pustaka}</Text>
     </View>
   );
 };
 
-export default function IconGalleryScreen() {
+export default function LayarGaleriIkon() {
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={gaya.areaAman}>
       <ScrollView>
-        <View style={styles.titleContainer}>
-          <Text style={styles.titleText}>Icon Gallery</Text>
-          <Text style={styles.subtitleText}>Displaying 10 Different Icons</Text>
+        <View style={gaya.wadahJudul}>
+          <Text style={gaya.teksJudul}>Galeri Ikon</Text>
+          <Text style={gaya.teksSubJudul}>Menampilkan 10 Ikon Berbeda</Text>
         </View>
-        <View style={styles.gridContainer}>
-          {ICON_LIST.map((icon, index) => (
-            <IconCard key={index} icon={icon} />
+        <View style={gaya.kisi}>
+          {DAFTAR_IKON.map((ikon, indeks) => (
+            <KartuIkon key={indeks} ikon={ikon} />
           ))}
         </View>
       </ScrollView>
@@ -66,50 +66,50 @@ export default function IconGalleryScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
+const gaya = StyleSheet.create({
+  areaAman: {
     flex: 1,
-    backgroundColor: '#121212', // Dark background
+    backgroundColor: '#121212', // Latar belakang gelap
   },
-  titleContainer: {
+  wadahJudul: {
     padding: 24,
     alignItems: 'center',
   },
-  titleText: {
+  teksJudul: {
     fontSize: 28,
     fontWeight: 'bold',
     color: '#FFFFFF',
   },
-  subtitleText: {
+  teksSubJudul: {
     fontSize: 16,
     color: '#A9A9A9',
     marginTop: 4,
   },
-  gridContainer: {
+  kisi: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
     paddingHorizontal: 10,
   },
-  cardContainer: {
+  kartu: {
     backgroundColor: '#1E1E1E',
     borderRadius: 16,
     padding: 20,
     margin: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    width: '42%', // About 2 columns with some spacing
-    aspectRatio: 1, // Makes the card square
+    width: '42%', // Sekitar 2 kolom dengan jarak antar kartu
+    aspectRatio: 1, // Membuat bentuk kartu menjadi persegi
     borderWidth: 1,
     borderColor: '#2D2D2D',
   },
-  iconNameText: {
+  teksNamaIkon: {
     fontSize: 16,
     fontWeight: '600',
     color: '#EAEAEA',
     marginTop: 12,
   },
-  iconLibraryText: {
+  teksPustakaIkon: {
     fontSize: 12,
     color: '#888888',
     marginTop: 4,
