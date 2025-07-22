@@ -1,27 +1,17 @@
 import React, { ComponentProps } from 'react';
 import { SafeAreaView, View, Text, StyleSheet, ScrollView } from 'react-native';
-// Impor berbagai keluarga ikon dari @expo/vector-icons
 import { FontAwesome, Ionicons, MaterialCommunityIcons, Feather, AntDesign } from '@expo/vector-icons';
 
-// --- Definisi Tipe untuk TypeScript ---
-
-// Tipe untuk objek ikon individual dalam daftar kita.
-// Ini memastikan setiap objek memiliki struktur yang benar.
-type IkonInfo = {
-  nama: string;
-  pustaka: keyof typeof ICON_LIBRARIES; // `pustaka` harus salah satu kunci dari ICON_LIBRARIES
-  warna: string;
+type IconInfo = {
+  name: string;
+  library: keyof typeof ICON_LIBRARIES;
+  color: string;
 };
 
-// Tipe untuk properti (props) dari komponen KartuIkon.
-type KartuIkonProps = {
-  ikon: IkonInfo;
+type IconCardProps = {
+  icon: IconInfo;
 };
 
-// --- Konfigurasi Pustaka Ikon ---
-
-// Definisikan tipe untuk setiap keluarga ikon yang akan kita gunakan.
-// Menggunakan ComponentProps dari React untuk secara otomatis mendapatkan tipe props yang benar.
 const ICON_LIBRARIES = {
   FontAwesome: (props: ComponentProps<typeof FontAwesome>) => <FontAwesome {...props} />,
   Ionicons: (props: ComponentProps<typeof Ionicons>) => <Ionicons {...props} />,
@@ -30,56 +20,45 @@ const ICON_LIBRARIES = {
   AntDesign: (props: ComponentProps<typeof AntDesign>) => <AntDesign {...props} />,
 };
 
-// Daftar 10 ikon yang akan ditampilkan.
-// Diberi tipe IkonInfo[] untuk memastikan semua datanya konsisten.
-const DAFTAR_IKON: IkonInfo[] = [
-  { nama: 'rocket', pustaka: 'FontAwesome', warna: '#ff4757' },
-  { nama: 'planet', pustaka: 'Ionicons', warna: '#ffa502' },
-  { nama: 'space-station', pustaka: 'MaterialCommunityIcons', warna: '#747d8c' },
-  { nama: 'git-branch', pustaka: 'Feather', warna: '#2ed573' },
-  { nama: 'codesquare', pustaka: 'AntDesign', warna: '#1e90ff' },
-  { nama: 'heart', pustaka: 'FontAwesome', warna: '#ff6b81' },
-  { nama: 'game-controller', pustaka: 'Ionicons', warna: '#5352ed' },
-  { nama: 'coffee', pustaka: 'Feather', warna: '#834d18' },
-  { nama: 'android', pustaka: 'MaterialCommunityIcons', warna: '#a0d243' },
-  { nama: 'apple1', pustaka: 'AntDesign', warna: '#ced6e0' },
+const ICON_LIST: IconInfo[] = [
+  { name: 'rocket', library: 'FontAwesome', color: '#ff4757' },
+  { name: 'planet', library: 'Ionicons', color: '#ffa502' },
+  { name: 'space-station', library: 'MaterialCommunityIcons', color: '#747d8c' },
+  { name: 'git-branch', library: 'Feather', color: '#2ed573' },
+  { name: 'codesquare', library: 'AntDesign', color: '#1e90ff' },
+  { name: 'heart', library: 'FontAwesome', color: '#ff6b81' },
+  { name: 'game-controller', library: 'Ionicons', color: '#5352ed' },
+  { name: 'coffee', library: 'Feather', color: '#834d18' },
+  { name: 'android', library: 'MaterialCommunityIcons', color: '#a0d243' },
+  { name: 'apple1', library: 'AntDesign', color: '#ced6e0' },
 ];
 
-/**
- * Komponen untuk menampilkan satu kartu ikon.
- * @param {KartuIkonProps} props - Properti yang berisi detail ikon.
- */
-const KartuIkon = ({ ikon }: KartuIkonProps) => {
-  // Ambil komponen ikon yang sesuai dari objek ICON_LIBRARIES
-  const IkonKomponen = ICON_LIBRARIES[ikon.pustaka];
+const IconCard = ({ icon }: IconCardProps) => {
+  const IconComponent = ICON_LIBRARIES[icon.library];
 
   return (
-    <View style={gaya.wadahKartu}>
-      {/* Properti 'name' diberi cast 'as any' karena setiap pustaka ikon memiliki daftar namanya sendiri yang spesifik.
-        Membuat tipe yang sangat ketat untuk ini akan sangat rumit.
-        Cast ini adalah solusi praktis yang memberi tahu TypeScript untuk mempercayai bahwa nama yang kita berikan sudah benar.
-      */}
-      <IkonKomponen name={ikon.nama as any} size={48} color={ikon.warna} />
-      <Text style={gaya.teksNamaIkon}>{ikon.nama}</Text>
-      <Text style={gaya.teksPustakaIkon}>{ikon.pustaka}</Text>
+    <View style={styles.cardContainer}>
+      {/* The 'name' property is cast as 'any' because each icon library has its own specific icon name list.
+          Creating a strict type for all of them would be too complex.
+          This cast is a practical solution telling TypeScript to trust the given name. */}
+      <IconComponent name={icon.name as any} size={48} color={icon.color} />
+      <Text style={styles.iconNameText}>{icon.name}</Text>
+      <Text style={styles.iconLibraryText}>{icon.library}</Text>
     </View>
   );
 };
 
-/**
- * Komponen utama layar yang menampilkan galeri ikon.
- */
-export default function LayarGaleriIkon() {
+export default function IconGalleryScreen() {
   return (
-    <SafeAreaView style={gaya.areaAman}>
+    <SafeAreaView style={styles.safeArea}>
       <ScrollView>
-        <View style={gaya.wadahJudul}>
-          <Text style={gaya.teksJudul}>Galeri Ikon</Text>
-          <Text style={gaya.teksSubJudul}>Menampilkan 10 Ikon Berbeda</Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.titleText}>Icon Gallery</Text>
+          <Text style={styles.subtitleText}>Displaying 10 Different Icons</Text>
         </View>
-        <View style={gaya.wadahKisi}>
-          {DAFTAR_IKON.map((ikon, indeks) => (
-            <KartuIkon key={indeks} ikon={ikon} />
+        <View style={styles.gridContainer}>
+          {ICON_LIST.map((icon, index) => (
+            <IconCard key={index} icon={icon} />
           ))}
         </View>
       </ScrollView>
@@ -87,50 +66,50 @@ export default function LayarGaleriIkon() {
   );
 }
 
-const gaya = StyleSheet.create({
-  areaAman: {
+const styles = StyleSheet.create({
+  safeArea: {
     flex: 1,
-    backgroundColor: '#121212', // Latar belakang gelap
+    backgroundColor: '#121212', // Dark background
   },
-  wadahJudul: {
+  titleContainer: {
     padding: 24,
     alignItems: 'center',
   },
-  teksJudul: {
+  titleText: {
     fontSize: 28,
     fontWeight: 'bold',
     color: '#FFFFFF',
   },
-  teksSubJudul: {
+  subtitleText: {
     fontSize: 16,
     color: '#A9A9A9',
     marginTop: 4,
   },
-  wadahKisi: {
+  gridContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
     paddingHorizontal: 10,
   },
-  wadahKartu: {
+  cardContainer: {
     backgroundColor: '#1E1E1E',
     borderRadius: 16,
     padding: 20,
     margin: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    width: '42%', // Sekitar 2 kolom dengan sedikit spasi
-    aspectRatio: 1, // Membuat kartu menjadi persegi
+    width: '42%', // About 2 columns with some spacing
+    aspectRatio: 1, // Makes the card square
     borderWidth: 1,
     borderColor: '#2D2D2D',
   },
-  teksNamaIkon: {
+  iconNameText: {
     fontSize: 16,
     fontWeight: '600',
     color: '#EAEAEA',
     marginTop: 12,
   },
-  teksPustakaIkon: {
+  iconLibraryText: {
     fontSize: 12,
     color: '#888888',
     marginTop: 4,
