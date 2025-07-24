@@ -1,117 +1,159 @@
-import React, { ComponentProps } from 'react';
-import { SafeAreaView, View, Text, StyleSheet, ScrollView } from 'react-native';
+import React from 'react';
+import { SafeAreaView, View, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import { FontAwesome, Ionicons, MaterialCommunityIcons, Feather, AntDesign } from '@expo/vector-icons';
 
-type InfoIkon = {
+// --- 1. STRUKTUR DATA BARU: DIOBJEKKAN BERDASARKAN PUSTAKA (dengan ikon unik) ---
+const KATALOG_SIMBOL = {
+  'FontAwesome': [
+    { nama: 'space-shuttle', warna: '#FFFFFF' },
+    { nama: 'qrcode', warna: '#FFFFFF' },
+  ],
+  'Ionicons': [
+    { nama: 'skull-outline', warna: '#FFFFFF' },
+    { nama: 'flask-outline', warna: '#FFFFFF' },
+  ],
+  'MaterialCommunityIcons': [
+    { nama: 'alien-outline', warna: '#FFFFFF' },
+    { nama: 'dna', warna: '#FFFFFF' },
+  ],
+  'Feather': [
+    { nama: 'wind', warna: '#FFFFFF' },
+    { nama: 'anchor', warna: '#FFFFFF' },
+  ],
+  'AntDesign': [
+    { nama: 'rest', warna: '#FFFFFF' },
+    { nama: 'disconnect', warna: '#FFFFFF' },
+  ],
+};
+
+// --- 2. PABRIK IKON: MEMETAKAN NAMA KE KOMPONEN AKTUAL ---
+const PabrikIkon = {
+  FontAwesome,
+  Ionicons,
+  MaterialCommunityIcons,
+  Feather,
+  AntDesign,
+};
+
+// --- 3. KOMPONEN ANAK DENGAN LOGIKA BERBEDA ---
+interface ItemSimbolProps {
+  IkonKomponen: React.ComponentType<any>;
   nama: string;
-  pustaka: keyof typeof PUSTAKA_IKON;
   warna: string;
-};
+  pustaka: string;
+  index: number; // Tambahkan index untuk menentukan warna latar
+}
 
-type PropertiKartuIkon = {
-  ikon: InfoIkon;
-};
-
-const PUSTAKA_IKON = {
-  FontAwesome: (props: ComponentProps<typeof FontAwesome>) => <FontAwesome {...props} />,
-  Ionicons: (props: ComponentProps<typeof Ionicons>) => <Ionicons {...props} />,
-  MaterialCommunityIcons: (props: ComponentProps<typeof MaterialCommunityIcons>) => <MaterialCommunityIcons {...props} />,
-  Feather: (props: ComponentProps<typeof Feather>) => <Feather {...props} />,
-  AntDesign: (props: ComponentProps<typeof AntDesign>) => <AntDesign {...props} />,
-};
-
-const DAFTAR_IKON: InfoIkon[] = [
-  { nama: 'rocket', pustaka: 'FontAwesome', warna: '#ff4757' },
-  { nama: 'planet', pustaka: 'Ionicons', warna: '#ffa502' },
-  { nama: 'space-station', pustaka: 'MaterialCommunityIcons', warna: '#747d8c' },
-  { nama: 'git-branch', pustaka: 'Feather', warna: '#2ed573' },
-  { nama: 'codesquare', pustaka: 'AntDesign', warna: '#1e90ff' },
-  { nama: 'heart', pustaka: 'FontAwesome', warna: '#ff6b81' },
-  { nama: 'game-controller', pustaka: 'Ionicons', warna: '#5352ed' },
-  { nama: 'coffee', pustaka: 'Feather', warna: '#834d18' },
-  { nama: 'android', pustaka: 'MaterialCommunityIcons', warna: '#a0d243' },
-  { nama: 'apple1', pustaka: 'AntDesign', warna: '#ced6e0' },
-];
-
-const KartuIkon = ({ ikon }: PropertiKartuIkon) => {
-  const KomponenIkon = PUSTAKA_IKON[ikon.pustaka];
+const ItemSimbol: React.FC<ItemSimbolProps> = ({ IkonKomponen, nama, warna, pustaka, index }) => {
+  // Tentukan gaya kartu berdasarkan index (genap/ganjil)
+  const gayaLatar = index % 2 === 0 ? visual.bingkaiItemHitam : visual.bingkaiItemMerah;
 
   return (
-    <View style={gaya.kartu}>
-      {/* Properti 'name' diberi cast 'as any' karena setiap pustaka ikon memiliki daftar nama unik.
-          Membuat tipe yang ketat untuk semuanya terlalu rumit.
-          Cast ini adalah solusi praktis untuk memberitahu TypeScript bahwa nama yang diberikan valid. */}
-      <KomponenIkon name={ikon.nama as any} size={48} color={ikon.warna} />
-      <Text style={gaya.teksNamaIkon}>{ikon.nama}</Text>
-      <Text style={gaya.teksPustakaIkon}>{ikon.pustaka}</Text>
+    <View style={[visual.bingkaiItem, gayaLatar]}>
+      <IkonKomponen name={nama} size={48} color={warna} />
+      <Text style={visual.teksNamaItem}>{nama}</Text>
+      <Text style={visual.teksPustakaItem}>{pustaka}</Text>
     </View>
   );
 };
 
-export default function LayarGaleriIkon() {
+// --- 4. KOMPONEN UTAMA DENGAN RENDER BERTINGKAT ---
+export default function PameranSimbolLayar() {
+  // Mengubah data objek menjadi satu array tunggal untuk memudahkan looping dengan index
+  const daftarIkonLengkap = Object.entries(KATALOG_SIMBOL).flatMap(([namaPustaka, daftarIkon]) => 
+    daftarIkon.map(ikon => ({ ...ikon, pustaka: namaPustaka }))
+  );
+
   return (
-    <SafeAreaView style={gaya.areaAman}>
+    <SafeAreaView style={visual.wadahLayar}>
       <ScrollView>
-        <View style={gaya.wadahJudul}>
-          <Text style={gaya.teksJudul}>Galeri Ikon</Text>
-          <Text style={gaya.teksSubJudul}>Menampilkan 10 Ikon Berbeda</Text>
+        <View style={visual.areaJudul}>
+          <Text style={visual.teksJudulUtama}>Koleksi Simbol Vektor</Text>
+          <Text style={visual.teksSubJudul}>10 Contoh dari Berbagai Pustaka</Text>
         </View>
-        <View style={gaya.kisi}>
-          {DAFTAR_IKON.map((ikon, indeks) => (
-            <KartuIkon key={indeks} ikon={ikon} />
-          ))}
+        <View style={visual.areaKisi}>
+          {daftarIkonLengkap.map((ikon, index) => {
+            const IkonKomponen = PabrikIkon[ikon.pustaka as keyof typeof PabrikIkon];
+            if (!IkonKomponen) return null;
+
+            return (
+              <ItemSimbol
+                key={${ikon.pustaka}-${ikon.nama}}
+                IkonKomponen={IkonKomponen}
+                nama={ikon.nama}
+                warna={ikon.warna}
+                pustaka={ikon.pustaka}
+                index={index}
+              />
+            );
+          })}
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-const gaya = StyleSheet.create({
-  areaAman: {
+// --- 5. GAYA VISUAL BARU: TEMA "HITAM & MERAH" ---
+const lebarLayar = Dimensions.get('window').width;
+const lebarItem = (lebarLayar - 48) / 2;
+
+const visual = StyleSheet.create({
+  wadahLayar: {
     flex: 1,
-    backgroundColor: '#121212', // Latar belakang gelap
+    backgroundColor: '#111111', // Latar belakang hitam pekat
   },
-  wadahJudul: {
-    padding: 24,
+  areaJudul: {
+    paddingVertical: 32,
     alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#444444',
   },
-  teksJudul: {
-    fontSize: 28,
-    fontWeight: 'bold',
+  teksJudulUtama: {
+    fontSize: 26,
+    fontWeight: '700',
     color: '#FFFFFF',
   },
   teksSubJudul: {
     fontSize: 16,
-    color: '#A9A9A9',
-    marginTop: 4,
+    color: '#AAAAAA',
+    marginTop: 8,
   },
-  kisi: {
+  areaKisi: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center',
-    paddingHorizontal: 10,
+    justifyContent: 'space-between',
+    padding: 16,
+    paddingTop: 24,
   },
-  kartu: {
-    backgroundColor: '#1E1E1E',
-    borderRadius: 16,
-    padding: 20,
-    margin: 8,
+  bingkaiItem: { // Gaya dasar untuk semua item
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    width: '42%', // Sekitar 2 kolom dengan jarak antar kartu
-    aspectRatio: 1, // Membuat bentuk kartu menjadi persegi
+    width: lebarItem,
+    aspectRatio: 1,
     borderWidth: 1,
-    borderColor: '#2D2D2D',
   },
-  teksNamaIkon: {
-    fontSize: 16,
+  bingkaiItemHitam: { // Latar Hitam
+    backgroundColor: '#1E1E1E',
+    borderColor: '#333333',
+  },
+  bingkaiItemMerah: { // Latar Merah
+    backgroundColor: '#DA291C',
+    borderColor: '#FF5555',
+  },
+  teksNamaItem: {
+    fontSize: 15,
     fontWeight: '600',
-    color: '#EAEAEA',
-    marginTop: 12,
+    color: '#FFFFFF',
+    marginTop: 16,
+    textAlign: 'center',
   },
-  teksPustakaIkon: {
+  teksPustakaItem: {
     fontSize: 12,
-    color: '#888888',
+    color: '#BBBBBB',
     marginTop: 4,
+    fontStyle: 'italic',
   },
 });
